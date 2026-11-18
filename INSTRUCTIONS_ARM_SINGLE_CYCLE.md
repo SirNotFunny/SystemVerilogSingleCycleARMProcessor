@@ -1,22 +1,19 @@
 # Hướng dẫn dự án single-cycle ARM processor
 
-Môn: **Thiết kế số và vi xử lý** · Cập nhật: **13/11/2026**
+Môn: **Thiết kế số và vi xử lý** · Cập nhật: **18/11/2026**
 
 Tài liệu này dùng để tự học, triển khai kiểm thử và làm chỉ dẫn cho những lần hỗ trợ dự án tiếp theo. Các liên kết slide là những tài liệu đã được tìm thấy và đọc; ví dụ mã dưới đây là mẫu hướng dẫn, chưa phải code đã tích hợp vào repo.
 
 ## 1. Mục tiêu và phạm vi dự án
 
-- Nhóm **3 người** cùng thiết kế CPU bằng **SystemVerilog**.
-- CPU thực hiện các lệnh trong phạm vi đã thống nhất theo kiến trúc **single-cycle**.
-- Sản phẩm được làm chung, **báo cáo viết cá nhân** để đánh giá mức độ hiểu.
-- Viết testcase và testbench chạy trên **ModelSim**, ưu tiên ngắn gọn, tự kiểm tra và có điểm dừng.
-- Hạn chế testcase lặp lại cùng một mục tiêu; mỗi trường hợp cần có lý do kiểm thử rõ ràng.
-- **Testbench giữa các nhóm dự án phải khác nhau** về tình huống, chương trình lệnh hoặc cách kiểm chứng, dù logic CPU có thể tương tự. Đổi tên biến hoặc thay vài hằng số chưa tạo ra khác biệt về tư duy kiểm thử.
-- Vấn đáp tập trung vào **báo cáo cá nhân và testbench**: phải giải thích được đầu vào, kết quả mong đợi, đường đi dữ liệu và tín hiệu điều khiển liên quan.
+Dự án tập trung vào **kiểm chứng CPU ARM Single-Cycle**. Nhóm dùng RTL do giảng viên cung cấp làm thiết kế cần kiểm tra (DUT), phân tích cách CPU hoạt động và tự xây dựng môi trường kiểm chứng bằng SystemVerilog. Đối chiếu với mã trong sách và tài liệu được giao khi xác định giao diện, mã lệnh và quy ước PC. [Đề bài cuối kỳ][de-bai]
 
-**Repo chính thức của dự án:** [SirNotFunny/SystemVerilogSingleCycleARMProcessor][repo].
+- Phạm vi kiểm chứng gồm **ADD, SUB, AND, OR, LD, ST và BEQ**. Kiến thức vấn đáp tập trung vào Chương 5, Chương 6 và Chương 7 đến phần Single-Cycle Processor. Các chương 1–4 trong lộ trình là phần ôn nền.
+- Dùng **ModelSim Intel FPGA Starter Edition 10.5b**. Môi trường cần có Driver, Monitor, Reference Model và Scoreboard. UVM là tùy chọn.
+- Lập Verification Plan trước khi viết testbench. Chạy test riêng từng lệnh, test reset và chương trình tích hợp đủ 7 lệnh. Báo cáo kết quả bằng log PASS/FAIL, waveform và tổng hợp coverage.
+- Nhóm dùng chung môi trường kiểm chứng. Mỗi thành viên chuẩn bị báo cáo cá nhân, giải thích ca kiểm thử mình phụ trách và bằng chứng mô phỏng.
 
-**Tình trạng nguồn đã kiểm tra ngày 13/11/2026:** nhánh `main` có `README.md`, các slide DDCA ARM Chương 1–7 và sách ARM dạng PDF; chưa có file RTL `.sv`, testbench hay chương trình mã máy để xác nhận tên module, cổng và tập lệnh đã triển khai. Các tên file/cổng trong tài liệu này là đề xuất hoặc giao diện mẫu. Cần đối chiếu lại khi nhóm đưa code CPU lên repo.
+**Tình trạng nhánh `main` ngày 18/11/2026.** Repo hiện có tài liệu đề bài, slide DDCA, sách ARM và hướng dẫn của nhóm. Tên module, cổng và đoạn code bên dưới là ví dụ để đối chiếu khi nhận RTL. [Repo dự án][repo]
 
 ## 2. ASM → 32 bit → testbench: hiểu đúng quy trình
 
@@ -160,21 +157,17 @@ Nối với các bài lab đã học: **mux/ALU → datapath; DFF có reset/enab
 
 `PC + 4` là địa chỉ lệnh tuần tự kế tiếp đối với chuỗi A32 trong mô hình này. Giá trị đọc kiến trúc của R15 và cơ sở tính branch là `PC + 8` theo thiết kế ARM đang học. Hai giá trị có mục đích khác nhau, cần theo đúng Ch7 và RTL thực tế.
 
-## 6. Chốt tập lệnh trước khi viết testcase
+## 6. Tập lệnh cần kiểm chứng
 
-**Mốc tham chiếu:** trang 11 của [Ch7][ch7] mô tả tập lệnh cơ sở sau. Đây là phạm vi trong slide, chưa phải xác nhận code của nhóm đã hỗ trợ đầy đủ.
-
-| Nhóm | Phạm vi cơ sở trong slide | Phải kiểm tra trong RTL |
+| Nhóm | Lệnh theo đề | Cần xác nhận trong RTL được giao |
 |---|---|---|
-| Data processing | `ADD`, `SUB`, `AND`, `ORR`; Src2 là register hoặc immediate; không shift register | Opcode, lựa chọn Src2, cách mở rộng immediate, S-bit và flags |
-| Memory | `LDR`, `STR`, positive immediate offset | Đọc/ghi word, base+offset, read latency, địa chỉ hợp lệ |
-| Branch | `B` | PC-relative target, sign extension, dịch trái 2 bit, xử lý điều kiện |
+| Data processing | `ADD`, `SUB`, `AND`, `OR` | Opcode, dạng toán hạng, thanh ghi đích và cách cập nhật flags nếu có |
+| Memory | `LD`, `ST` | Địa chỉ hiệu dụng, cách đọc/ghi bộ nhớ, dữ liệu và đường ghi về thanh ghi |
+| Branch | `BEQ` | Cách xác định hai toán hạng bằng nhau, cách tính đích và PC khi nhảy hoặc đi tiếp |
 
-Ch7 trang 27–33 dùng DP immediate dạng **zero-extend imm8**. Ch6.3 trang 12–17 trình bày thêm dạng A32 **imm8 xoay phải `2 × rot`**. Nếu RTL chỉ lấy `Instr[7:0]`, cần giữ `rot = 0`, dùng DP immediate trong khoảng `0..255`, hoặc triển khai và kiểm thử phần mở rộng trước khi dùng hằng có rotation.
+Các ví dụ ở dưới dùng cú pháp ARM A32 trong sách, với tên `ORR`, `LDR`, `STR` và mã hóa nhánh của [Chương 7][ch7]. Dùng tên, định dạng mã máy và cơ chế so sánh theo DUT khi tạo test thực tế. Ca `BEQ` cần có hai toán hạng bằng nhau và khác nhau. Nếu DUT dùng cờ `Z`, thiết lập cờ bằng chuỗi lệnh mà DUT hỗ trợ.
 
-`MOV`, `CMP`, `MUL`, `EOR`, `BL`, các lệnh byte, shift và indexing phức tạp có thể xuất hiện trong bài ASM nhưng **không nằm trọn trong danh sách cơ sở trên**. Ch7 trang 74–79 có phần mở rộng CMP và shifted register. Chỉ dùng các chức năng đó khi đặc tả và RTL đã có. Với memory word, chọn địa chỉ chia hết cho 4 trong vùng RAM được cấp.
-
-Trước khi sinh chương trình, ghi một bảng ngắn: **lệnh hỗ trợ — dạng toán hạng — flags — addressing mode — giới hạn bộ nhớ**.
+Chương 7 minh họa immediate của data processing bằng cách zero-extend imm8. Chương 6.3 có thêm encoding A32 xoay imm8. Chọn dạng toán hạng theo RTL khi mã hóa chương trình. `MOV`, `CMP`, `BNE`, `BL` và các dạng shift là nội dung tham khảo. Chỉ đưa chúng vào chương trình kiểm thử khi DUT hỗ trợ.
 
 ## 7. Ví dụ đầy đủ: một lệnh ASM thành 32 bit
 
@@ -209,7 +202,7 @@ Khi giải thích datapath: register file đọc R1/R2 → mux chọn dữ liệ
 
 ### Branch: công thức cần nhớ
 
-Với lệnh B trong mô hình này, gọi `A` là địa chỉ byte của chính lệnh branch, `T` là địa chỉ đích:
+Trong ví dụ A32 ở Chương 7, gọi `A` là địa chỉ byte của chính lệnh nhánh và `T` là địa chỉ đích. Khi DUT dùng encoding nhánh A32 với `imm24`, tính như sau.
 
 ```text
 imm24_signed = (T - (A + 8)) / 4
@@ -248,13 +241,22 @@ E5804044
 EAFFFFFE
 ```
 
-Nạp bằng `$readmemh("program.hex", imem, 0, 7)`. Trong file dữ liệu này chỉ cần các chữ số hex; không viết tiền tố `32'h` như hằng trong source SystemVerilog. Nếu dùng chuỗi 32 ký tự `0/1` cho mỗi word thì dùng `$readmemb`.
+Nếu chạy từ thư mục gốc của gói nộp theo mục 11, đặt file trong `testbench/` và nạp bằng `$readmemh("testbench/program.hex", imem, 0, 7)`. Trong file dữ liệu này chỉ cần các chữ số hex; không viết tiền tố `32'h` như hằng trong source SystemVerilog. Nếu dùng chuỗi 32 ký tự `0/1` cho mỗi word thì dùng `$readmemb`.
 
 **Byte và word:** `PC = 0x0C` đọc `imem[3]`; địa chỉ data `0x40` ứng với `dmem[16]`. Với mảng word 32 bit và địa chỉ word-aligned, chỉ số là `address[31:2]`. Mỗi dòng trên là cả một word lệnh, không phải từng byte theo thứ tự little-endian.
 
 Có thể mã hóa thủ công vài lệnh đại diện để học và đối chiếu. Khi dùng assembler cho nhiều lệnh, chọn encoding **A32** phù hợp, kiểm tra disassembly và tập lệnh hỗ trợ; một công cụ chuyển đổi không thay cho việc kiểm tra CPU có thực thi dạng lệnh đó hay không.
 
 ## 9. Testbench tự kiểm tra: cấu trúc mẫu
+
+| Thành phần | Việc cần làm |
+|---|---|
+| Driver | Tạo clock/reset, nạp mã lệnh và dữ liệu đầu vào theo giao diện DUT. |
+| Monitor | Ghi nhận PC, mã lệnh, kết quả ALU, ghi thanh ghi, truy cập bộ nhớ và kết quả nhánh tại thời điểm cập nhật tương ứng. |
+| Reference Model | Tính PC, nội dung thanh ghi và bộ nhớ kỳ vọng từ chương trình, trạng thái đầu và đặc tả 7 lệnh. |
+| Scoreboard | So sánh trạng thái kỳ vọng với dữ liệu Monitor quan sát được. Tự báo PASS/FAIL và ghi ca kiểm thử, giá trị kỳ vọng và giá trị thực tế khi có sai khác. |
+
+Đoạn code dưới đây minh họa một ca tự kiểm tra bằng hai lần ghi RAM. Dùng các thành phần trong bảng để mở rộng thành môi trường nộp bài.
 
 ### Giao diện giả định
 
@@ -284,7 +286,7 @@ module cpu_tb;
       imem[i] = 32'hEAFFFFFE;
       dmem[i] = 0;
     end
-    $readmemh("program.hex", imem, 0, 7);
+    $readmemh("testbench/program.hex", imem, 0, 7);
     repeat (2) @(negedge clk);
     reset = 0;
 
@@ -324,63 +326,58 @@ endmodule
 
 Mẫu chỉ kiểm tra chuỗi ADD/STR/LDR này, có giới hạn 20 chu kỳ sau reset. Nó kết thúc sau store thứ hai, **chưa kiểm chứng lệnh B ở cuối**, chưa kiểm thử flags, reset giữa chương trình hay mọi lỗi có thể xảy ra. Muốn quan sát từng register ngay sau mỗi lệnh, bổ sung một giao diện debug hoặc checkpoint đọc register phù hợp với thiết kế; số 12 ở đầu ra chỉ chứng minh các tác động được checker này quan sát.
 
-## 10. Chọn testcase để ít overlap nhưng có ý nghĩa
+## 10. Verification Plan và phân công
 
-Mỗi dòng dưới đây là một mục tiêu kiểm chứng; một mục tiêu có thể cần vài lệnh chuẩn bị. Có thể dùng lại chuỗi khởi tạo và hàm kiểm tra. Tránh tạo nhiều bản TB chỉ để lặp lại cùng một phép cộng với các số nhỏ khác nhau.
+Mỗi test case cần ghi mục tiêu, trạng thái đầu và dữ liệu đầu vào, chuỗi lệnh, kết quả kỳ vọng, tín hiệu cần quan sát và tiêu chí PASS/FAIL. Tính kết quả kỳ vọng từ đặc tả, rồi dùng Scoreboard so sánh với DUT.
 
-| ID | Mục tiêu | Tình huống điển hình | Điều phải kiểm tra |
-|---|---|---|---|
-| R0 | Reset và tuần tự | Assert reset qua cạnh clock; sau đó chạy lệnh bình thường | PC về địa chỉ reset; PC tiếp tục tăng 4; hành vi RF/flags đúng đặc tả reset, không mặc định mọi register đều về 0 |
-| D1 | Chọn Src2 | ADD dạng register và immediate với nguồn đã biết | Đúng register/immediate và đúng register đích |
-| D2 | SUB và thứ tự toán hạng | `5 - 7` | Kết quả `FFFFFFFE`, không bị đảo A/B |
-| D3 | Chọn phép logic | AND và ORR với `A5`, `3C` | AND = `24`; ORR = `BD`, không chỉ chọn mẫu toàn 0 |
-| F1 | Zero/negative flags | SUBS hai giá trị bằng nhau; phép trừ ra âm | Z/N đúng với từng kết quả |
-| F2 | Carry | ADDS `FFFFFFFF + 1` | Result = 0, C = 1, V = 0 |
-| F3 | Signed overflow | ADDS `7FFFFFFF + 1` | Result = `80000000`, V = 1, C = 0 |
-| F4 | Điều kiện cập nhật flags | Tạo flags bằng lệnh S=1, sau đó chạy lệnh S=0 | Flags đã lưu không bị ghi đè; với ANDS/ORRS bản cơ sở, kiểm tra NZ và giữ CV theo thiết kế |
-| M1 | Địa chỉ và dữ liệu STR | Base = 32, offset = 12 | Chỉ địa chỉ byte 44 nhận dữ liệu cần ghi; tránh chỉ test base bằng 0 |
-| M2 | Đường writeback LDR | RAM có trước mẫu khác 0, load về register rồi xuất ra checkpoint | Lấy dữ liệu từ memory và ghi đúng đích, không nhầm lấy ALUResult |
-| B1 | Branch tiến | B nhảy qua một STR có tác dụng dễ phát hiện | PC đến đúng đích; STR bị bỏ qua không xảy ra |
-| B2 | Branch lùi và dấu | Vòng lặp hữu hạn dùng SUBS giảm bộ đếm và BNE | Nhảy lùi đúng, sign extension đúng và cuối cùng thoát vòng lặp |
-| C1 | Điều kiện đúng/sai | Tạo Z xác định rồi chạy lệnh EQ/NE, gồm một lệnh store có điều kiện sai | Lệnh đúng có tác dụng; lệnh sai không ghi RF/RAM/flags và vẫn đi tới PC tuần tự |
+| Nhóm test | Ca cần có | Kết quả kiểm tra |
+|---|---|---|
+| `ADD`, `SUB` | Toán hạng bằng 0, hai toán hạng bằng nhau, số dương và âm theo biểu diễn của DUT, giá trị biên | Kết quả số học và thanh ghi đích đúng |
+| `AND`, `OR` | Mẫu toàn 0, toàn 1, bit xen kẽ và trường hợp chỉ một toán hạng có bit 1 | Kết quả từng bit và thanh ghi đích đúng |
+| `LD` | Đọc ít nhất hai địa chỉ hợp lệ, dùng dữ liệu 0 và các mẫu bit khác nhau | Địa chỉ đọc, dữ liệu và thanh ghi nhận đúng |
+| `ST` | Ghi nhiều giá trị vào các địa chỉ, ghi đè và đọc lại | `MemWrite`, địa chỉ, dữ liệu ghi và nội dung bộ nhớ đúng |
+| `BEQ` | Một ca hai toán hạng bằng nhau (taken), một ca khác nhau (not-taken). Chọn địa chỉ đích khác địa chỉ lệnh kế tiếp để phân biệt hai đường đi | Quan sát kết quả nhánh và so sánh PC sau lệnh với đích hoặc địa chỉ tuần tự theo DUT |
+| Tích hợp | Một chương trình dùng đủ 7 lệnh, lệnh sau dùng kết quả lệnh trước, có `LD`, `ST` và `BEQ` | Trạng thái cuối khớp Reference Model |
+| Reset và chạy tuần tự | Reset khởi động, chạy nhiều lệnh, reset rồi khởi tạo và chạy lại | Trạng thái reset và thứ tự cập nhật đúng theo đặc tả |
 
-F2/F3 có thể kiểm tra ở cấp ALU trước, rồi kiểm tra việc lưu flags ở cấp CPU. Để tạo toán hạng lớn trong chương trình, có thể chuẩn bị dữ liệu RAM rồi LDR; không cần dùng MOV hoặc phép shift chưa được triển khai.
+Tổng hợp coverage từ các ca đã chạy. Ghi đủ 7/7 lệnh, hai kết quả nhánh, địa chỉ và mẫu dữ liệu bộ nhớ, các nhóm toán hạng và chương trình tích hợp. Dẫn log hoặc waveform làm bằng chứng.
 
-Đối với B1/C1, **chờ một cửa sổ quan sát đủ dài và kiểm tra không xuất hiện tác động bị cấm**. Không chỉ nhận được một tín hiệu thành công sớm rồi kết thúc trước đoạn lẽ ra phải bị bỏ qua.
+Nếu DUT có S-bit hoặc cơ chế thực thi có điều kiện của A32, có thể bổ sung ca cập nhật và giữ nguyên flags, nhánh lùi với offset âm và chặn ghi khi điều kiện sai. Các tình huống này phụ thuộc phạm vi RTL được giao.
 
 ### Phân chia cho 3 thành viên
 
-Đây là gợi ý tổ chức phạm vi, cần chốt theo code và yêu cầu giảng viên:
-
-| Thành viên | Phần kiểm thử phụ trách chính | Trọng tâm báo cáo cá nhân |
+| Thành viên | Ca kiểm thử phụ trách | Vai trò dùng chung đề xuất |
 |---|---|---|
-| 1 | Data processing và flags | ALU, Src2, opcode, S-bit, carry/overflow |
-| 2 | LDR/STR và memory | Địa chỉ byte/word, base+offset, RegSrc cho STR, memory write/read và writeback |
-| 3 | Branch, conditional execution và PC | PC+4/PC+8, imm24, CondEx, chặn tác động ghi |
+| Dũng | `ADD`, `SUB`, `AND`, `OR`; giải thích ALU, chọn toán hạng và ghi thanh ghi | Phụ trách Reference Model. Thống nhất cách mô hình hóa memory và PC cùng Đạt và Khánh. |
+| Đạt | `LD`, `ST`; giải thích tính địa chỉ, ghi/đọc bộ nhớ và ghi về thanh ghi | Phụ trách Driver và Monitor. |
+| Khánh | `BEQ` taken/not-taken và giá trị PC tiếp theo; giải thích điều kiện nhánh và cách tính đích theo DUT | Phụ trách Scoreboard và tổng hợp coverage từ kết quả của cả nhóm. |
 
-Reset, khởi tạo, giao diện chung và chạy tích hợp là phần cùng thống nhất. Mỗi người vẫn cần hiểu toàn bộ CPU ở mức đi theo được một lệnh; báo cáo cá nhân phải thể hiện cách lý giải và bằng chứng kiểm thử của người viết.
+Cả nhóm thống nhất giao diện, Verification Plan, ca reset, chương trình tích hợp và chạy thử gói nộp. Mỗi thành viên ghi trong báo cáo ca mình phụ trách, giá trị kỳ vọng và kết quả quan sát được.
 
-Sự khác nhau giữa các **nhóm dự án** nên đến từ kịch bản và mục tiêu kiểm thử thực sự: một nhóm dùng chuỗi tính toán rồi load/store, nhóm khác dùng thao tác mask trên mảng, nhóm khác dùng vòng lặp có nhánh. Tất cả vẫn phải chứng minh các chức năng được yêu cầu.
+## 11. Đóng gói và chạy ModelSim
 
-## 11. Cách tổ chức file và chạy ModelSim
+Nộp **một file nén** ZIP hoặc RAR, đặt tên theo mẫu `CLASS.TEAM`. Ví dụ tên ZIP là `CLASS_TKS10.TEAM5.zip`.
 
-| File đề xuất | Vai trò |
-|---|---|
-| Các file RTL `.sv` | CPU và các khối con; tên/path do nhóm thống nhất |
-| `rtl.f` | Liệt kê các file RTL thực sự cần compile, mỗi dòng một đường dẫn |
-| `program.s` | Chương trình ASM để con người đọc và giải thích |
-| `program.hex` | Các word mã máy để instruction memory đọc |
-| `cpu_tb.sv` | Clock/reset, memory model nếu cần, checker và timeout |
-| `run.do` | Lệnh compile, load simulation và chạy |
-| Báo cáo cá nhân | Đặc tả, giải thích thiết kế, testcase, kết quả và giới hạn |
+```text
+project/            RTL của CPU và danh sách file biên dịch nếu dùng
+testbench/          Driver, Monitor, Reference Model, Scoreboard và testbench top
+  program.hex      Vị trí file mã máy của ví dụ ở mục 9
+  tests/            Chương trình kiểm thử và Verification Plan
+  results/          Log PASS/FAIL, waveform tiêu biểu và coverage summary
+run.do
+HọTênSV.pdf
+```
 
-Ví dụ lệnh ở Transcript sau khi đã tạo RTL và sửa giao diện TB cho khớp; đường dẫn thư mục dưới đây là **đề xuất**:
+Đặt tên báo cáo PDF theo họ tên sinh viên, chẳng hạn `NguyenVanA.pdf`. Hướng dẫn nộp chấp nhận `run.do` hoặc `run.txt`. Dùng `run.do` để giảng viên có thể chạy trực tiếp và đáp ứng yêu cầu file mô phỏng `.do` trong đề.
+
+Trong ModelSim 10.5b, chọn thư mục đã giải nén chứa `run.do` làm thư mục làm việc, rồi chạy `do run.do` trong Transcript. Ví dụ dưới đây dùng giao diện mẫu ở mục 9 và đường dẫn tương đối từ thư mục đó.
 
 ```tcl
-cd {D:/UniSources/ThietKeSoVaViXuLi/ARM_Final}
-vlib work
+if {![file isdirectory work]} {
+    vlib work
+}
 vmap work work
-vlog -sv -f rtl.f cpu_tb.sv
+vlog -sv -f project/rtl.f testbench/cpu_tb.sv
 vsim -voptargs=+acc work.cpu_tb
 add wave sim:/cpu_tb/clk sim:/cpu_tb/reset
 add wave sim:/cpu_tb/PC sim:/cpu_tb/Instr
@@ -389,11 +386,7 @@ add wave sim:/cpu_tb/WriteData sim:/cpu_tb/ReadData
 run -all
 ```
 
-`program.hex` được tìm theo thư mục làm việc của simulation. Nếu dùng top/TB khác, sửa tên ở `vsim` và đường dẫn `sim:/...`. Khi `work` đã tồn tại có thể bỏ qua bước tạo lại. Với package SystemVerilog, xếp file package trước các module sử dụng nó trong `rtl.f`.
-
-Testbench không được tổng hợp thành CPU trên FPGA. Program HEX chứa lệnh CPU thực thi; file cấu hình FPGA do Quartus tạo chứa cấu hình phần cứng. Giữ rõ hai loại file này khi giải thích design flow.
-
-Nếu triển khai lên FPGA thật, cần kiểm tra loại RAM được suy diễn, read latency và timing. Mô hình RAM đọc tổ hợp có thể phù hợp với bài single-cycle, trong khi RAM block có đọc đồng bộ sẽ thay đổi giả định về chu kỳ. Kết quả mô phỏng chức năng cần được phân biệt với timing closure sau tổng hợp/place-and-route.
+Trong `project/rtl.f`, liệt kê các file RTL thật bằng đường dẫn tương đối từ thư mục gốc của gói nộp. Nếu có package hoặc nhiều file testbench, thêm các file theo thứ tự phụ thuộc và sửa tên top cho khớp RTL và testbench. Mẫu mục 9 đọc `testbench/program.hex`. Khi đóng gói, chạy thử từ bản giải nén để kiểm tra script, dữ liệu kiểm thử và cách lấy log.
 
 ## 12. Ghi báo cáo và chuẩn bị vấn đáp
 
@@ -403,7 +396,7 @@ Mỗi testcase nên có một dòng hồ sơ:
 |---|---|---|---|---|---|---|
 | Ví dụ D1 | ADD register | R1=5, R2=7 | `ADD R3,R1,R2` / `E0813002` | R3=12; flags giữ nguyên | Điền sau khi chạy | Log/checkpoint và waveform cần thiết |
 
-Báo cáo cá nhân có thể theo thứ tự: phạm vi tập lệnh → sơ đồ khối → nguyên lý một lệnh mỗi nhóm → bảng testcase → cách tự kiểm tra trong TB → kết quả đã chạy → giới hạn còn lại → tài liệu tham khảo. Dùng một vài waveform tiêu biểu để giải thích, kèm bảng kết quả cho toàn bộ bộ test; tránh chụp hàng loạt sóng mà không chỉ ra đang chứng minh điều gì.
+Báo cáo cần giải thích tập lệnh, datapath, controller, luồng thực thi và cách các thành phần kiểm chứng phối hợp. Trình bày Test Plan, kết quả mô phỏng, coverage, lỗi phát hiện, cách debug, giới hạn và hướng cải tiến. Chọn waveform tiêu biểu và ghi rõ mỗi hình chứng minh ca nào.
 
 Tự trả lời được các câu hỏi sau:
 
@@ -420,7 +413,7 @@ Tự trả lời được các câu hỏi sau:
 
 ## 13. Chỉ dẫn cho những lần hỗ trợ dự án tiếp theo
 
-- Đọc đặc tả và RTL hiện có trước khi khẳng định CPU hỗ trợ lệnh/dạng immediate nào. Dùng tập lệnh Ch7 làm mốc tham chiếu khi chưa có code.
+- Dùng bảy lệnh trong đề làm phạm vi kiểm chứng. Đối chiếu RTL được giao để xác nhận mã hóa, cú pháp, giao diện, thời điểm quan sát và quy ước PC.
 - Khi cần học lại kiến thức, liên kết đúng slide ở mục 3, chỉ rõ phần liên quan và giải thích bằng một ví dụ nhỏ.
 - Trình bày một lệnh theo thứ tự: **ASM → trạng thái mong đợi → trường bit → control signals → datapath → điểm kiểm tra trong TB**.
 - Với mỗi testcase, giải thích lý do chọn dữ liệu và lỗi mà ca đó có thể phát hiện. Kết quả mong đợi phải tính độc lập từ ý nghĩa lệnh.
@@ -433,7 +426,7 @@ Tự trả lời được các câu hỏi sau:
 
 ## 14. Tài liệu tham khảo bổ sung
 
-Các slide môn học ở mục 3 là nguồn chính. Khi cần đối chiếu thêm:
+Đối chiếu [đề bài cuối kỳ][de-bai] và các slide môn học ở mục 3. Tài liệu đọc thêm gồm:
 
 - [Trang tài nguyên DDCA ARM của tác giả][ddca]: có các gói lecture slides, HDL và labs. Dùng làm tài liệu tham khảo và đối chiếu, kiểm tra với phiên bản môn học trước khi áp dụng.
 - [Arm — ADD/ADDS immediate, encoding A32][arm-add]: đối chiếu trường bit; chọn phần A32/A1 của tài liệu.
@@ -444,6 +437,7 @@ Các slide môn học ở mục 3 là nguồn chính. Khi cần đối chiếu t
 
 **Giới hạn xác minh:** đã đọc các slide được dẫn và kiểm tra trạng thái repo. Các word mã máy và trạng thái số học trong ví dụ được đối chiếu bằng tính toán. Mẫu TB còn cần core đúng giao diện để biên dịch và chạy; tài liệu không coi ví dụ đó là kết quả ModelSim đã chạy thành công.
 
+[de-bai]: Project_Cuoi_Ky_Thiet_Ke_So_Va_Vi_Xu_Ly_ARM.pdf
 [repo]: https://github.com/SirNotFunny/SystemVerilogSingleCycleARMProcessor
 [ch1]: https://chatgpt.com/library?file_id=libfile_ba2b58abc4508191a7323022ead5c66e&account_id=personal
 [ch2]: https://chatgpt.com/library?file_id=libfile_ec56d95f1f988191abedddc25a7e74d1&account_id=personal
