@@ -12,8 +12,8 @@ module beq_next_pc (
 );
     logic [31:0] branch_offset;
 
-    assign pc_plus4 = pc + 32'd4;
-    assign pc_plus8 = pc + 32'd8;
+    assign pc_plus4 = pc + 32'd4; //địa chỉ pc+4
+    assign pc_plus8 = pc + 32'd8; //địa chỉ pc+8
 
     // A32 BEQ: EQ condition, branch opcode, link bit clear.
     assign is_beq = (instr[31:24] == 8'h0A);
