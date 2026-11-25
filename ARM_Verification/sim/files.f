@@ -1,0 +1,12 @@
+rtl/alu.sv
+rtl/controller.sv
+rtl/datapath.sv
+rtl/arm.sv
+rtl/memory.sv
+rtl/top.sv
+tb/verification_pkg.sv
+tb/driver.sv
+tb/monitor.sv
+tb/reference_model.sv
+tb/scoreboard.sv
+tb/tb_top.sv
