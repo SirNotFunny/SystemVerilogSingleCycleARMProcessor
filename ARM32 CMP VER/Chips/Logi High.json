@@ -1,0 +1,85 @@
+{
+  "DLSVersion": "2.1.6",
+  "Name": "Logi High",
+  "NameLocation": 0,
+  "ChipType": 0,
+  "Size": {
+    "x": 1.025,
+    "y": 0.5
+  },
+  "Colour": {
+    "r": 0.112129517,
+    "g": 0.164751261,
+    "b": 0.534770548,
+    "a": 1
+  },
+  "InputPins":[],
+  "OutputPins":[
+    {
+      "Name":"OUT",
+      "ID":654636383,
+      "Position":{
+        "x":34.09798,
+        "y":-14.33499
+      },
+      "BitCount":1,
+      "Colour":0,
+      "ValueDisplayMode":0
+    }
+  ],
+  "SubChips":[
+    {
+      "Name":"Logi Low",
+      "ID":1906079504,
+      "Label":"",
+      "Position":{
+        "x":29.16127,
+        "y":-14.3368
+      },
+      "OutputPinColourInfo":[{"PinColour":0,"PinID":1678185147}],
+      "InternalData":null
+    },
+    {
+      "Name":"NOT",
+      "ID":375286260,
+      "Label":"",
+      "Position":{
+        "x":31.45157,
+        "y":-14.32819
+      },
+      "OutputPinColourInfo":[{"PinColour":0,"PinID":1063652406}],
+      "InternalData":null
+    }
+  ],
+  "Wires":[
+    {
+      "SourcePinAddress":{
+        "PinID":1678185147,
+        "PinOwnerID":1906079504
+      },
+      "TargetPinAddress":{
+        "PinID":831828784,
+        "PinOwnerID":375286260
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    },
+    {
+      "SourcePinAddress":{
+        "PinID":1063652406,
+        "PinOwnerID":375286260
+      },
+      "TargetPinAddress":{
+        "PinID":0,
+        "PinOwnerID":654636383
+      },
+      "ConnectionType":0,
+      "ConnectedWireIndex":-1,
+      "ConnectedWireSegmentIndex":-1,
+      "Points":[{"x":0.0,"y":0.0},{"x":0.0,"y":0.0}]
+    }
+  ],
+  "Displays": null
+}

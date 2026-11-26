@@ -1,0 +1,324 @@
+{
+  "ProjectName": "ARM32 CMP VER",
+  "DLSVersion_LastSaved": "2.1.6",
+  "DLSVersion_EarliestCompatible": "2.0.0",
+  "CreationTime": "2026-11-19T11:02:08.638+07:00",
+  "LastSaveTime": "2026-11-26T02:03:57.575+07:00",
+  "Prefs_MainPinNamesDisplayMode": 2,
+  "Prefs_ChipPinNamesDisplayMode": 2,
+  "Prefs_GridDisplayMode": 1,
+  "Prefs_Snapping": 0,
+  "Prefs_StraightWires": 0,
+  "Prefs_SimPaused": false,
+  "Prefs_SimTargetStepsPerSecond": 1000,
+  "Prefs_SimStepsPerClockTick": 250,
+  "AllCustomChipNames":[
+    "NOT",
+    "AND2 1BIT",
+    "OR2 1BIT",
+    "NOR2 1BIT",
+    "SR LATCH",
+    "D LATCH",
+    "D F-F",
+    "4-BIT REGISTER",
+    "MUX2 1BIT",
+    "MUX4 1BIT",
+    "XOR2 1BIT",
+    "XNOR2 1BIT",
+    "AND3 1BIT",
+    "OR3 1BIT",
+    "MUX4 1BIT V2",
+    "D F-F EN",
+    "D F-F SET SYNC",
+    "1-BIT FA",
+    "2-BIT COUNTER",
+    "SCAN 2-BIT COUNTER ",
+    "SCAN D F-F",
+    "DECODE 2-4",
+    "REG FILE 4x4",
+    "REG FILE 4x8",
+    "4-BIT FA",
+    "16-BIT FA",
+    "32-BIT FA",
+    "REG FILE 8x16",
+    "DECODE 3-8",
+    "MUX8 1BIT",
+    "MUX16 1BIT",
+    "DEMUX4 1BIT",
+    "DEMUX2 1BIT",
+    "REG FILE 16x32",
+    "32-BIT REGISTER",
+    "ALU",
+    "NOR32 1BIT",
+    "XOR3 1BIT",
+    "MUX2 32BIT",
+    "Extend32",
+    "Logi Low",
+    "Logi High",
+    "PC REG",
+    "REG FILE ARM32",
+    "PCPlus4",
+    "ROM 256x32",
+    "Data Path",
+    "MUX2 4BIT",
+    "DATA MEM 16x32",
+    "Main Decoder",
+    "PC Logic",
+    "2-BIT REG EN",
+    "AND4 1BIT",
+    "ALU Decoder",
+    "Decoder",
+    "Cond Check",
+    "AND2 4BIT",
+    "Cond Logic",
+    "Control Unit",
+    "ARM32",
+    "NOR3 1BIT",
+    "D LATCH SET & RST",
+    "D F-F SET & RST ASYNC",
+    "D F-F EN SET RST",
+    "DATA MEM 64x32"
+  ],
+  "StarredList":[
+    {
+      "Name":"IN/OUT",
+      "IsCollection":true
+    },
+    {
+      "Name":"NAND",
+      "IsCollection":false
+    },
+    {
+      "Name":"NOT",
+      "IsCollection":false
+    },
+    {
+      "Name":"AND",
+      "IsCollection":true
+    },
+    {
+      "Name":"OR",
+      "IsCollection":true
+    },
+    {
+      "Name":"NOR",
+      "IsCollection":true
+    },
+    {
+      "Name":"XOR",
+      "IsCollection":true
+    },
+    {
+      "Name":"XNOR2 1BIT",
+      "IsCollection":false
+    },
+    {
+      "Name":"MUX",
+      "IsCollection":true
+    },
+    {
+      "Name":"DEMUX",
+      "IsCollection":true
+    },
+    {
+      "Name":"LATCH",
+      "IsCollection":true
+    },
+    {
+      "Name":"FLIP FLOP",
+      "IsCollection":true
+    },
+    {
+      "Name":"ADDER",
+      "IsCollection":true
+    },
+    {
+      "Name":"COUNTER",
+      "IsCollection":true
+    },
+    {
+      "Name":"DECODE",
+      "IsCollection":true
+    },
+    {
+      "Name":"MEMORY",
+      "IsCollection":true
+    },
+    {
+      "Name":"MERGE/SPLIT",
+      "IsCollection":true
+    },
+    {
+      "Name":"ALU",
+      "IsCollection":false
+    },
+    {
+      "Name":"Extend32",
+      "IsCollection":false
+    },
+    {
+      "Name":"Logi Low",
+      "IsCollection":false
+    },
+    {
+      "Name":"Logi High",
+      "IsCollection":false
+    },
+    {
+      "Name":"PC REG",
+      "IsCollection":false
+    },
+    {
+      "Name":"REG FILE ARM32",
+      "IsCollection":false
+    },
+    {
+      "Name":"PCPlus4",
+      "IsCollection":false
+    },
+    {
+      "Name":"Data Path",
+      "IsCollection":false
+    },
+    {
+      "Name":"DATA MEM 16x32",
+      "IsCollection":false
+    },
+    {
+      "Name":"BUS",
+      "IsCollection":true
+    },
+    {
+      "Name":"BASIC",
+      "IsCollection":true
+    },
+    {
+      "Name":"Main Decoder",
+      "IsCollection":false
+    },
+    {
+      "Name":"PC Logic",
+      "IsCollection":false
+    },
+    {
+      "Name":"ALU Decoder",
+      "IsCollection":false
+    },
+    {
+      "Name":"Decoder",
+      "IsCollection":false
+    },
+    {
+      "Name":"Cond Check",
+      "IsCollection":false
+    },
+    {
+      "Name":"Cond Logic",
+      "IsCollection":false
+    },
+    {
+      "Name":"Control Unit",
+      "IsCollection":false
+    },
+    {
+      "Name":"ARM32",
+      "IsCollection":false
+    },
+    {
+      "Name":"DATA MEM 64x32",
+      "IsCollection":false
+    }
+  ],
+  "ChipCollections":[
+    {
+      "Chips":["NAND","CLOCK","PULSE","KEY","3-STATE BUFFER"],
+      "IsToggledOpen":false,
+      "Name":"BASIC"
+    },
+    {
+      "Chips":["IN-1","IN-4","IN-8","OUT-1","OUT-4","OUT-8"],
+      "IsToggledOpen":false,
+      "Name":"IN/OUT"
+    },
+    {
+      "Chips":["1-4BIT","1-8BIT","4-8BIT","4-1BIT","8-4BIT","8-1BIT"],
+      "IsToggledOpen":false,
+      "Name":"MERGE/SPLIT"
+    },
+    {
+      "Chips":["BUS-1","BUS-4","BUS-8"],
+      "IsToggledOpen":false,
+      "Name":"BUS"
+    },
+    {
+      "Chips":["7-SEGMENT","DOT DISPLAY","RGB DISPLAY","LED"],
+      "IsToggledOpen":false,
+      "Name":"DISPLAY"
+    },
+    {
+      "Chips":["ROM 256×16","ROM 256x32","REG FILE 4x4","REG FILE 4x8","REG FILE 8x16","REG FILE 16x32","2-BIT REG EN","4-BIT REGISTER","32-BIT REGISTER"],
+      "IsToggledOpen":true,
+      "Name":"MEMORY"
+    },
+    {
+      "Chips":["MUX2 1BIT","MUX2 4BIT","MUX2 32BIT","MUX4 1BIT","MUX4 1BIT V2","MUX8 1BIT","MUX16 1BIT"],
+      "IsToggledOpen":false,
+      "Name":"MUX"
+    },
+    {
+      "Chips":["DEMUX2 1BIT","DEMUX4 1BIT"],
+      "IsToggledOpen":false,
+      "Name":"DEMUX"
+    },
+    {
+      "Chips":["AND2 1BIT","AND2 4BIT","AND3 1BIT","AND4 1BIT"],
+      "IsToggledOpen":true,
+      "Name":"AND"
+    },
+    {
+      "Chips":["D LATCH","D LATCH SET & RST","SR LATCH"],
+      "IsToggledOpen":true,
+      "Name":"LATCH"
+    },
+    {
+      "Chips":["D F-F","D F-F EN","D F-F SET SYNC","SCAN D F-F","D F-F SET & RST ASYNC","D F-F EN SET RST"],
+      "IsToggledOpen":true,
+      "Name":"FLIP FLOP"
+    },
+    {
+      "Chips":["OR2 1BIT","OR3 1BIT"],
+      "IsToggledOpen":false,
+      "Name":"OR"
+    },
+    {
+      "Chips":["1-BIT FA","4-BIT FA","16-BIT FA","32-BIT FA"],
+      "IsToggledOpen":false,
+      "Name":"ADDER"
+    },
+    {
+      "Chips":["2-BIT COUNTER","SCAN 2-BIT COUNTER "],
+      "IsToggledOpen":false,
+      "Name":"COUNTER"
+    },
+    {
+      "Chips":["DECODE 2-4","DECODE 3-8"],
+      "IsToggledOpen":false,
+      "Name":"DECODE"
+    },
+    {
+      "Chips":["NOR2 1BIT","NOR3 1BIT","NOR32 1BIT"],
+      "IsToggledOpen":true,
+      "Name":"NOR"
+    },
+    {
+      "Chips":["XOR2 1BIT","XOR3 1BIT"],
+      "IsToggledOpen":true,
+      "Name":"XOR"
+    },
+    {
+      "Chips":["BUZZER","NOT","XNOR2 1BIT","ALU","Extend32","Logi Low","Logi High","PC REG","REG FILE ARM32","PCPlus4","Data Path","DATA MEM 16x32","Main Decoder","PC Logic","ALU Decoder","Decoder","Cond Check","Cond Logic","Control Unit","ARM32"],
+      "IsToggledOpen":true,
+      "Name":"OTHER"
+    }
+  ]
+}
